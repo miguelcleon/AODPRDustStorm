@@ -4,6 +4,7 @@ import h5py
 import numpy as np
 import os
 import string
+import re
 from datetime import datetime
 # qslat = [18.32129, 18.32131]
 # qslon = [-65.81711, -65.81709]
@@ -48,27 +49,25 @@ def writedata(csvout, datasite,file,i, lat, lon,site):
     # print(firstdt)
     # print(dt)
     nanvals = {}
-    nanvals['UVAerosolIndex'] = [-1.2676506E+30]
-    nanvals['VISAerosolIndex'] = [-1.2676506E+30]
-    nanvals['AerosolModelMW'] = [65535]
-    nanvals['AerosolOpticalThicknessPassedThresholdMean'] = [-32767]
-    nanvals['AerosolOpticalThicknessMW'] = [-32767]
-    nanvals['AerosolOpticalThicknessPassedThresholdStd'] = [-32767]
-    nanvals['SingleScatteringAlbedoMW'] = [-32767]
-    nanvals['SingleScatteringAlbedoPassedThresholdMean'] = [-32767]
-    nanvals['SingleScatteringAlbedoPassedThresholdStd'] = [-32767]
-    nanvals['SolarZenithAngle'] = [-1.2676506E+30]
-    nanvals['TerrainReflectivity'] = [-32767]
-    nanvals['ViewingZenithAngle'] = [-1.2676506E+30]
+    nanvals['UVAerosolIndex'] = [-1.2676506e+30,-1.2676507e+30]
+    nanvals['VISAerosolIndex'] = [-1.2676506e+30,-1.2676507e+30]
+    nanvals['AerosolModelMW'] = [65535,65536]
+    nanvals['AerosolOpticalThicknessPassedThresholdMean'] = [-32767, -32768]
+    nanvals['AerosolOpticalThicknessMW'] = [-32767, -32768]
+    nanvals['AerosolOpticalThicknessPassedThresholdStd'] = [-32767, -32768]
+    nanvals['SingleScatteringAlbedoMW'] = [-32767, -32768]
+    nanvals['SingleScatteringAlbedoPassedThresholdMean'] = [-32767, -32768]
+    nanvals['SingleScatteringAlbedoPassedThresholdStd'] = [-32767, -32768]
+    nanvals['SolarZenithAngle'] = [-1.2676506e+30,-1.2676507e+30]
+    nanvals['TerrainReflectivity'] = [-32767, -32768]
+    nanvals['ViewingZenithAngle'] = [-1.2676506e+30,-1.2676507e+30]
+    nanvals['AerosolOpticalThicknessMW'] = [-32767,-32768]
+    nanvals['SingleScatteringAlbedoMW'] = [-32767,-32768]
     #handle missing values change them to nan
     for key, val in datasite.items():
-        tmpkey = key.rstrip(string.digits)
         for nankey, nanval in nanvals.items():
-            if key == 'UVAerosolIndex':
-                print(val[0])
-                print(nanval[0])
-                print(val == -1.2676506e+30)
-            if tmpkey == nankey and (val[0] == -1.2676506e+30 or val[0] == nanval[0]):
+
+            if nankey in key and (val[0] == -1.2676506e+30 or (str(val[0]) == str(nanval[0]) or str(val[0]) == str(nanval[1]))):
                 #print(key)
                 #print(val[0])
                 datasite[key] = [np.NAN]
