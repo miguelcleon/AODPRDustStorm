@@ -16,6 +16,18 @@ qsandicacoslat = -18.375
 qsandicacoslon = -65.875
 sabanalat = -18.375
 sabanalon = -65.625
+rroadslon = -65.625
+rroadslat = -18.125
+humacoalon = -65.875
+humacaolat = -18.125
+culebralon = -65.375
+culebralat = -18.375
+viequezlon = -65.375
+viequezlat = -18.125
+natlanticqsandIlat = -18.625
+natlanticqsandIlon = -65.875
+natlanticfajardolat = -18.625
+natlanticfajardolon = -65.625
 # C:/Users/12672/OneDrive - University of New Hampshire/AOD
 
 def extractdatesfromfilename(file):
@@ -89,7 +101,7 @@ def writedata(csvout, datasite,file,i, lat, lon,site):
     return i
 dirs = ['./2017', './2018','./2019','./2020']
 i=0
-with open('AODout.csv', 'w', newline='') as outfile:
+with open('AODoutbig.csv', 'w', newline='') as outfile:
     csvout = csv.writer(outfile)
     for dir in dirs:
         for file in os.listdir(dir):
@@ -106,6 +118,24 @@ with open('AODout.csv', 'w', newline='') as outfile:
                 # lon_index = np.logical_and(hdf5lon > qslon[0], hdf5lon < qslon[1])
                 qsbox_index = np.logical_and(qsandicacoslat == hdf5lat, qsandicacoslon == hdf5lon)
                 sbbox_index = np.logical_and(sabanalat == hdf5lat, sabanalon == hdf5lon)
+                # rroadslon = -65.625
+                # rroadslat = -18.125
+                # humacoalon = -65.875
+                # humacaolat = -18.125
+                # culebralon = -65.375
+                # culebralat = -18.375
+                # viequezlon = -65.375
+                # viequezlat = -18.125
+                # natlanticqsandIlat = -18.625
+                # natlanticqsandIlon = -65.875
+                # natlanticfajardolat = -18.625
+                # natlanticfajardolon = -65.625
+                rrbox_index = np.logical_and(rroadslat == hdf5lat, rroadslon == hdf5lon)
+                hubox_index = np.logical_and(humacaolat == hdf5lat, humacoalon == hdf5lon)
+                cubox_index = np.logical_and(culebralat == hdf5lat, culebralon == hdf5lon)
+                vibox_index = np.logical_and(viequezlat == hdf5lat, viequezlon == hdf5lon)
+                naqsbox_index = np.logical_and(natlanticqsandIlat == hdf5lat, natlanticqsandIlon == hdf5lon)
+                nafajbox_index = np.logical_and(natlanticfajardolat == hdf5lat, natlanticfajardolon == hdf5lon)
                 # lon_index = np.logical_and(qslon[0] < hdf5lon, qslon[1] >  hdf5lon)
                 # box_index = np.logical_and(lat_index, lon_index)
                 hdf5fields = ['AerosolOpticalThicknessPassedThresholdMean','AerosolModelMW',
@@ -120,22 +150,79 @@ with open('AODout.csv', 'w', newline='') as outfile:
                 site= 'Sabana'
                 sabdata = {}
                 sabdata['site'] = site
+
+                site= 'Roosevelt Roads'
+                rrdata = {}
+                rrdata['site'] = site
+                site= 'Humacao'
+                hudata = {}
+                hudata['site'] = site
+
+                site= 'Culebra'
+                cudata = {}
+                cudata['site'] = site
+                site= 'Vieques'
+                vidata = {}
+                vidata['site'] = site
+                site= 'Atlantic north of QS'
+                naqsdata = {}
+                naqsdata['site'] = site
+                site= 'Atlantic north of Fajardo'
+                nafajdata = {}
+                nafajdata['site'] = site
+
                 for field in hdf5fields:
                     curfield = hdf5path + field
                     data = aodfile[curfield][qsbox_index]
                     sbdata = aodfile[curfield][sbbox_index]
+                    rrsdata = aodfile[curfield][rrbox_index]
+                    husdata = aodfile[curfield][hubox_index]
+
+                    cusdata = aodfile[curfield][cubox_index]
+                    visdata = aodfile[curfield][vibox_index]
+                    naqssdata = aodfile[curfield][naqsbox_index]
+                    nafajsdata = aodfile[curfield][nafajbox_index]
+
                     datasite[field] = data
+
+                    rrdata[field] = rrsdata
                     sabdata[field] = sbdata
+                    hudata[field] = husdata
+
+                    cudata[field] = cusdata
+                    vidata[field] = visdata
+                    naqsdata[field] = naqssdata
+                    nafajdata[field] = nafajsdata
+
                 for field in hdf5multifields:
                     for j in range(0,5):
                         curfield = hdf5path + field
                         data = aodfile[curfield][j][qsbox_index]
                         sbdata = aodfile[curfield][j][sbbox_index]
+                        rrsdata = aodfile[curfield][j][rrbox_index]
+                        husdata = aodfile[curfield][j][hubox_index]
+                        cusdata = aodfile[curfield][j][cubox_index]
+                        visdata = aodfile[curfield][j][vibox_index]
+                        naqssdata = aodfile[curfield][j][naqsbox_index]
+                        nafajsdata = aodfile[curfield][j][nafajbox_index]
+
                         datasite[field + str(j)] = data
                         sabdata[field + str(j)] = sbdata
+                        rrdata[field + str(j)] = rrsdata
+                        hudata[field + str(j)] = husdata
+
+                        cudata[field + str(j)] = cusdata
+                        vidata[field + str(j)] = visdata
+                        naqsdata[field + str(j)] = naqssdata
+                        nafajdata[field + str(j)] = nafajsdata
                 #print(len(aodfile[hdf5path][:]))
 
                 #print(i)
                 i = writedata(csvout, datasite,file,i, qsandicacoslat, qsandicacoslon,site)
-
                 i = writedata(csvout, sabdata,file,i, sabanalat, sabanalon,site)
+                i = writedata(csvout, rrdata,file,i, rroadslat, rroadslon,site)
+                i = writedata(csvout, hudata,file,i, humacaolat, humacoalon,site)
+                i = writedata(csvout, cudata,file,i, culebralat, culebralon,site)
+                i = writedata(csvout, vidata,file,i, viequezlat, viequezlon,site)
+                i = writedata(csvout, naqsdata,file,i, natlanticqsandIlat, natlanticqsandIlon,site)
+                i = writedata(csvout, nafajdata,file,i, natlanticfajardolat, natlanticfajardolon,site)
